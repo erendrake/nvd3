@@ -30,8 +30,7 @@ nv.addGraph({
     var chart = nv.models.line()
                 .width(width)
                 .height(height)
-                .margin({top: 20, right: 20, bottom: 20, left: 20})
-
+                .margin({top: 20, right: 20, bottom: 20, left: 20});
 
     d3.select('#test1')
       .attr('width', width)
@@ -67,8 +66,6 @@ nv.addGraph({
   }
 });
 
-
-
 function sinAndCos() {
   var sin = [],
       cos = [];
@@ -82,12 +79,14 @@ function sinAndCos() {
     {
       values: sin,
       key: "Sine Wave",
-      color: "#ff7f0e"
+      color: "#ff7f0e",
+      isArea: true
     },
     {
       values: cos,
       key: "Cosine Wave",
-      color: "#2ca02c"
+      color: "#2ca02c",
+      isDashed: true
     }
   ];
 }
