@@ -47,7 +47,7 @@ nv.models.line = function() {
           container = d3.select(this);
 
       //------------------------------------------------------------
-      // Setup Scales
+      // Setup Scale//s
 
       x = scatter.xScale();
       y = scatter.yScale();
@@ -119,9 +119,7 @@ nv.models.line = function() {
       groups
           .transition()
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .5);
-
-
+          .style('fill-opacity', .5)
 
       var areaPaths = groups.selectAll('path.nv-area')
           .data(function(d) { return d.isArea ? [d] : [] }); // this is done differently than lines because I need to check if series is an area
@@ -156,50 +154,31 @@ nv.models.line = function() {
 
 
       var linePaths = groups.selectAll('path.nv-line')
-          .data(function (d) { return d.isDashed ? [] : [d.values] });
+          .data(function (d) { return [d] });
 
       linePaths.enter().append('path')
           .attr('class', 'nv-line')
-          .attr('d',
-            d3.svg.line()
+          .style('stroke-width', function(d) { if(d.lineWidth) return d.lineWidth;})
+          .style('stroke-dasharray', function(d) { if(d.lineDash) return d.lineDash;})
+          .attr('d', function(d) {
+            return d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
               .x(function(d,i) { return nv.utils.NaNtoZero(x0(getX(d,i))) })
               .y(function(d,i) { return nv.utils.NaNtoZero(y0(getY(d,i))) })
-          );
+              .apply(this, [d.values])
+          });
 
       linePaths
           .transition()
-          .attr('d',
-            d3.svg.line()
+          .attr('d', function(d) {
+            return d3.svg.line()
               .interpolate(interpolate)
               .defined(defined)
               .x(function(d,i) { return nv.utils.NaNtoZero(x(getX(d,i))) })
               .y(function(d,i) { return nv.utils.NaNtoZero(y(getY(d,i))) })
-          );
-
-      var dashedLinePaths = groups.selectAll('path.nv-line')
-          .data(function (d) { return d.isDashed ? [d.values] : [] });
-
-      dashedLinePaths.enter().append('path')
-          .attr('class', 'nv-line')
-          .attr('d',
-            d3.svg.line()
-              .interpolate(interpolate)
-              .defined(defined)
-              .x(function(d,i) { return nv.utils.NaNtoZero(x0(getX(d,i))) })
-              .y(function(d,i) { return nv.utils.NaNtoZero(y0(getY(d,i))) })
-          ).style("stroke-dasharray", ("3, 3"));
-
-      dashedLinePaths
-          .transition()
-          .attr('d',
-            d3.svg.line()
-              .interpolate(interpolate)
-              .defined(defined)
-              .x(function(d,i) { return nv.utils.NaNtoZero(x(getX(d,i))) })
-              .y(function(d,i) { return nv.utils.NaNtoZero(y(getY(d,i))) })
-          );
+              .apply(this, [d.values])
+          });
 
       //store old scales for use in transitions on update
       x0 = x.copy();

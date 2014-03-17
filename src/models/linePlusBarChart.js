@@ -64,7 +64,7 @@ nv.models.linePlusBarChart = function() {
       var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
           top = e.pos[1] + ( offsetElement.offsetTop || 0),
           x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
-          y = (e.series.bar ? y1Axis : y2Axis).tickFormat()(lines.y()(e.point, e.pointIndex)),
+          y = (e.series.isBar ? y1Axis : y2Axis).tickFormat()(lines.y()(e.point, e.pointIndex)),
           content = tooltip(e.series.key, x, y, e, chart);
 
       nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
@@ -129,8 +129,8 @@ nv.models.linePlusBarChart = function() {
       //------------------------------------------------------------
       // Setup Scales
 
-      var dataBars = data.filter(function(d) { return !d.disabled && d.bar });
-      var dataLines = data.filter(function(d) { return !d.bar }); // removed the !d.disabled clause here to fix Issue #240
+      var dataBars = data.filter(function(d) { return !d.disabled && d.isBar });
+      var dataLines = data.filter(function(d) { return !d.isBar }); // removed the !d.disabled clause here to fix Issue #240
 
       //x = xAxis.scale();
        x = dataLines.filter(function(d) { return !d.disabled; }).length && dataLines.filter(function(d) { return !d.disabled; })[0].values.length ? lines.xScale() : bars.xScale();
@@ -166,7 +166,7 @@ nv.models.linePlusBarChart = function() {
         g.select('.nv-legendWrap')
             .datum(data.map(function(series) {
               series.originalKey = series.originalKey === undefined ? series.key : series.originalKey;
-              series.key = series.originalKey + (series.bar ? ' (left axis)' : ' (right axis)');
+              series.key = series.originalKey + (series.isBar ? ' (left axis)' : ' (right axis)');
               return series;
             }))
           .call(legend);
@@ -196,14 +196,14 @@ nv.models.linePlusBarChart = function() {
         .height(availableHeight)
         .color(data.map(function(d,i) {
           return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled && !data[i].bar }))
+        }).filter(function(d,i) { return !data[i].disabled && !data[i].isBar }))
 
       bars
         .width(availableWidth)
         .height(availableHeight)
         .color(data.map(function(d,i) {
           return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled && data[i].bar }))
+        }).filter(function(d,i) { return !data[i].disabled && data[i].isBar }))
 
 
 
